@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+*.mp4
+*.wav
+*.mp3
+frames/
+frames_preview/
+out/
+tools/story-clip/hf/assets/
+tools/story-clip/manifest.json

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>The Canal Ring - Instagram story</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: normal; src: url("assets/fonts/cormorant-garamond-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Cormorant Garamond"; font-weight: 600; font-style: normal; src: url("assets/fonts/cormorant-garamond-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Cormorant Garamond"; font-weight: 600; font-style: italic; src: url("assets/fonts/cormorant-garamond-latin-600-italic.woff2") format("woff2"); }
+      @font-face { font-family: "Manrope"; font-weight: 500; font-style: normal; src: url("assets/fonts/manrope-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Manrope"; font-weight: 700; font-style: normal; src: url("assets/fonts/manrope-latin-700-normal.woff2") format("woff2"); }
+
+      :root { --ink: #f8eee8; --ink-dim: rgba(248, 238, 232, 0.78); --acc: #ff9d7a; --acc-ink: #2a1210; --glass: rgba(24, 18, 54, 0.8); --line: rgba(255, 255, 255, 0.34); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #120f26; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Manrope", sans-serif; color: var(--ink); }
+      .clip { position: absolute; inset: 0; }
+      #plate { width: 100%; height: 100%; object-fit: cover; }
+      .shadow { text-shadow: 0 4px 34px rgba(10, 6, 30, 0.7), 0 1px 3px rgba(10, 6, 30, 0.5); }
+
+      /* ---------- intro ---------- */
+      #i-scrim { position: absolute; left: 0; right: 0; top: 0; height: 1400px; background: linear-gradient(180deg, rgba(14, 8, 36, 0.78) 0%, rgba(14, 8, 36, 0.66) 45%, rgba(14, 8, 36, 0.3) 78%, rgba(14, 8, 36, 0) 100%); }
+      #i-block { position: absolute; left: 0; right: 0; top: 400px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+      #i-eyebrow { font-weight: 700; font-size: 27px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--acc); margin-bottom: 30px; padding-left: 0.4em; }
+      .mask { display: block; overflow: hidden; padding: 0.02em 0.1em 0.16em; }
+      .mask span { display: block; }
+      .title { font-family: "Cormorant Garamond", serif; font-weight: 600; font-size: 214px; line-height: 0.9; letter-spacing: -0.01em; }
+      .title.it { font-style: italic; color: var(--acc); }
+      #i-rule { width: 300px; height: 4px; background: var(--acc); margin: 34px 0 30px; transform-origin: 0 50%; }
+      #i-sub { font-weight: 500; font-size: 38px; letter-spacing: 0.04em; color: var(--ink); }
+
+      /* ---------- controls guide ---------- */
+      #g-panel { position: absolute; left: 90px; top: 520px; width: 900px; height: 530px; border-radius: 40px; background: var(--glass); border: 2px solid var(--line); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.22), 0 30px 80px rgba(8, 4, 24, 0.5); }
+      #g-head { position: absolute; left: 48px; top: 40px; font-weight: 700; font-size: 24px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--acc); }
+      .key { position: absolute; width: 108px; height: 108px; border-radius: 26px; display: grid; place-items: center; font-weight: 700; font-size: 44px; color: var(--ink); background: rgba(255, 255, 255, 0.14); border: 2px solid var(--line); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), 0 9px 0 rgba(0, 0, 0, 0.3); }
+      .key.wide { width: 250px; font-size: 30px; letter-spacing: 0.24em; padding-left: 0.24em; }
+      .ring { position: absolute; width: 250px; height: 108px; border-radius: 26px; border: 3px solid var(--acc); opacity: 0; }
+      .lab { position: absolute; font-family: "Cormorant Garamond", serif; font-weight: 600; font-style: italic; font-size: 52px; line-height: 1; color: var(--ink); }
+      .hint { position: absolute; font-weight: 500; font-size: 27px; color: var(--ink-dim); letter-spacing: 0.01em; }
+
+      /* ---------- shot labels ---------- */
+      #s-scrim { position: absolute; left: 0; right: 0; top: 0; height: 900px; background: linear-gradient(180deg, rgba(14, 8, 36, 0.55) 0%, rgba(14, 8, 36, 0) 100%); }
+      .chip { position: absolute; left: 72px; top: 618px; display: flex; align-items: stretch; gap: 28px; }
+      .chip::before { content: ""; position: absolute; left: -72px; top: -44px; width: 960px; height: calc(100% + 88px); background: linear-gradient(90deg, rgba(14, 8, 36, 0.8) 0%, rgba(14, 8, 36, 0.62) 62%, rgba(14, 8, 36, 0) 100%); z-index: -1; }
+      .chip { isolation: isolate; opacity: 0; }
+      .chip .bar { width: 7px; background: var(--acc); border-radius: 4px; transform-origin: 50% 0; }
+      .chip .big { font-family: "Cormorant Garamond", serif; font-weight: 600; font-size: 104px; line-height: 0.95; letter-spacing: -0.01em; padding-bottom: 0.1em; }
+      .chip .sm { font-weight: 700; font-size: 26px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--acc); margin-top: 6px; }
+      #s-map { position: absolute; left: 30px; top: 536px; padding: 7px 16px 7px 18px; border-radius: 999px; background: rgba(14, 8, 36, 0.78); font-weight: 700; font-size: 21px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--acc); }
+
+      /* ---------- call to action ---------- */
+      #c-scrim { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 52%, rgba(14, 8, 36, 0.72) 0%, rgba(14, 8, 36, 0.45) 55%, rgba(14, 8, 36, 0.15) 100%); }
+      #c-block { position: absolute; left: 0; right: 0; top: 780px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+      #c-title { font-family: "Cormorant Garamond", serif; font-weight: 600; font-size: 196px; line-height: 0.92; letter-spacing: -0.01em; }
+      #c-title em { font-style: italic; color: var(--acc); }
+      #c-sub { font-weight: 500; font-size: 36px; color: var(--ink); margin: 26px 0 50px; letter-spacing: 0.02em; }
+      #c-url { padding: 28px 46px; border-radius: 999px; background: var(--glass); border: 2px solid var(--line); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); font-weight: 700; font-size: 40px; letter-spacing: 0.01em; box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.22), 0 20px 60px rgba(8, 4, 24, 0.5); }
+
+      #flash { position: absolute; inset: 0; background: #ffe9dc; opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="25">
+      <video id="plate" class="clip" src="assets/plate.mp4" data-start="0" data-duration="25" data-track-index="0" muted playsinline></video>
+      <audio id="mix" src="assets/mix.wav" data-start="0" data-duration="25" data-track-index="9" data-volume="1"></audio>
+
+      <!-- 0.0 to 4.8 : intro -->
+      <section id="intro" class="clip" data-start="0" data-duration="4.8" data-track-index="2">
+        <div id="i-scrim"></div>
+        <div id="i-block">
+          <div id="i-eyebrow" class="shadow">A tiny boat game</div>
+          <div class="mask"><span class="title shadow" id="i-t1">The Canal</span></div>
+          <div class="mask"><span class="title it shadow" id="i-t2">Ring</span></div>
+          <div id="i-rule"></div>
+          <div id="i-sub" class="shadow">Motor or sail through Amsterdam at dusk</div>
+        </div>
+      </section>
+
+      <!-- 4.8 to 12.0 : how to play -->
+      <section id="guide" class="clip" data-start="4.8" data-duration="7.2" data-track-index="2">
+        <div id="g-panel">
+          <div id="g-head">How to play</div>
+          <div class="key" id="k-w" style="left: 168px; top: 120px">W</div>
+          <div class="key" id="k-a" style="left: 48px; top: 240px">A</div>
+          <div class="key" id="k-s" style="left: 168px; top: 240px">S</div>
+          <div class="key" id="k-d" style="left: 288px; top: 240px">D</div>
+          <div class="lab" id="l-steer" style="left: 48px; top: 378px">Steer</div>
+          <div class="hint" id="h-rev" style="left: 48px; top: 446px">Hit a wall? Reverse with S.</div>
+          <div class="ring" id="k-space-ring" style="left: 452px; top: 120px"></div>
+          <div class="key wide" id="k-space" style="left: 452px; top: 120px">SPACE</div>
+          <div class="lab" id="l-turbo" style="left: 728px; top: 152px">Turbo</div>
+          <div class="ring" id="k-f-ring" style="left: 452px; top: 240px; width: 108px"></div>
+          <div class="key" id="k-f" style="left: 452px; top: 240px">F</div>
+          <div class="lab" id="l-sail" style="left: 582px; top: 272px">Sail</div>
+          <div class="key" id="k-p" style="left: 452px; top: 360px">P</div>
+          <div class="lab" id="l-auto" style="left: 582px; top: 392px">Autopilot</div>
+        </div>
+      </section>
+
+      <!-- 12.0 to 21.6 : the game -->
+      <section id="show" class="clip" data-start="12" data-duration="9.6" data-track-index="2">
+        <div id="s-scrim"></div>
+        <div class="chip" id="c1"><div class="bar"></div><div><div class="big shadow">Coffeeshops</div><div class="sm shadow">plus cafes, cheese and tulips</div></div></div>
+        <div class="chip" id="c2"><div class="bar"></div><div><div class="big shadow">Set sail</div><div class="sm shadow">real wind, real sailing</div></div></div>
+        <div class="chip" id="c3"><div class="bar"></div><div><div class="big shadow">Western Islands</div><div class="sm shadow">drawbridges and tiny houses</div></div></div>
+        <div class="chip" id="c4"><div class="bar"></div><div><div class="big shadow">Green hills</div><div class="sm shadow">windmills, meadows and forests</div></div></div>
+        <div class="chip" id="c5"><div class="bar"></div><div><div class="big shadow">Hit turbo</div><div class="sm shadow">and never lose your way</div></div></div>
+        <div id="s-map" class="shadow">Live minimap</div>
+      </section>
+
+      <!-- 21.6 to 25.0 : call to action -->
+      <section id="cta" class="clip" data-start="21.6" data-duration="3.4" data-track-index="2">
+        <div id="c-scrim"></div>
+        <div id="c-block">
+          <div id="c-title" class="shadow">Play it <em>free</em></div>
+          <div id="c-sub" class="shadow">Runs in your browser. No download.</div>
+          <div id="c-url">amsterdam-canal-ring.netlify.app</div>
+        </div>
+      </section>
+
+      <div id="flash" class="clip" data-start="0" data-duration="25" data-track-index="5"></div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const ACC = "#ff9d7a", INK = "#f8eee8", ACC_INK = "#2a1210";
+      const IDLE = "rgba(255,255,255,0.14)";
+      const GLOW = "inset 0 2px 0 rgba(255,255,255,0.5), 0 3px 0 rgba(0,0,0,0.3), 0 0 46px rgba(255,157,124,0.75)";
+      const REST = "inset 0 2px 0 rgba(255,255,255,0.3), 0 9px 0 rgba(0,0,0,0.3)";
+
+      /* ===== intro (hit lands on the first beat, 0.6 s) ===== */
+      tl.fromTo("#i-scrim", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 0);
+      tl.fromTo("#i-eyebrow", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.3);
+      tl.fromTo("#i-t1", { yPercent: 112 }, { yPercent: 0, duration: 1.0, ease: "expo.out" }, 0.6);
+      tl.fromTo("#i-t2", { yPercent: 112 }, { yPercent: 0, duration: 1.0, ease: "expo.out" }, 0.78);
+      tl.fromTo("#i-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "power3.inOut" }, 1.5);
+      tl.fromTo("#i-sub", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 1.8);
+      tl.to("#i-block", { opacity: 0, y: -40, duration: 0.4, ease: "power2.in" }, 4.3);
+      tl.to("#i-scrim", { opacity: 0, duration: 0.4 }, 4.3);
+
+      /* ===== how to play (keys light up exactly when the boat is steered) ===== */
+      tl.fromTo("#g-panel", { opacity: 0, y: 90, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, 4.8);
+      ["#g-head", "#k-w", "#k-a", "#k-s", "#k-d", "#l-steer", "#k-space", "#l-turbo", "#k-f", "#l-sail", "#k-p", "#l-auto", "#h-rev"].forEach((s, i) => {
+        tl.fromTo(s, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 5.0 + i * 0.05);
+      });
+      const press = (id, t0, t1) => {
+        tl.to(id, { backgroundColor: ACC, color: ACC_INK, borderColor: ACC, scale: 1.1, boxShadow: GLOW, duration: 0.1, ease: "power2.out" }, t0);
+        if (t1) tl.to(id, { backgroundColor: IDLE, color: INK, borderColor: "rgba(255,255,255,0.34)", scale: 1, boxShadow: REST, duration: 0.22, ease: "power2.out" }, t1);
+      };
+      press("#k-w", 5.5, 11.4);           // W was pressed at 4.8; shown once the panel is readable
+      press("#k-a", 6.0, 6.5);
+      press("#k-d", 6.9, 7.8);
+      press("#k-a", 8.1, 8.5);
+      press("#k-space", 9.0, 10.2);       // turbo on, then off
+      tl.fromTo("#k-space-ring", { scale: 1, opacity: 0.9 }, { scale: 1.45, opacity: 0, duration: 0.7, ease: "power2.out" }, 9.0);
+      tl.to("#l-turbo", { color: ACC, scale: 1.12, transformOrigin: "0% 50%", duration: 0.25, ease: "back.out(2)" }, 9.0);
+      tl.to("#l-turbo", { color: INK, scale: 1, duration: 0.25 }, 10.2);
+      press("#k-f", 10.8, null);          // the sails go up on screen at the same moment
+      tl.fromTo("#k-f-ring", { scale: 1, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.7, ease: "power2.out" }, 10.8);
+      tl.to("#l-sail", { color: ACC, scale: 1.12, transformOrigin: "0% 50%", duration: 0.25, ease: "back.out(2)" }, 10.8);
+      tl.to("#g-panel", { opacity: 0, y: 40, duration: 0.25, ease: "power2.in" }, 11.75);
+
+      /* ===== the game: one label per shot, a flash on every cut ===== */
+      tl.fromTo("#s-scrim", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 12.0);
+      tl.to("#s-scrim", { opacity: 0 , duration: 0.4 }, 21.2);
+      [["#c1", 12.0, 2.4], ["#c2", 14.4, 1.8], ["#c3", 16.2, 1.8], ["#c4", 18.0, 1.8], ["#c5", 19.8, 1.8]].forEach(([id, t0, dur]) => {
+        tl.set(id, { opacity: 1 }, t0 + 0.05);
+        tl.fromTo(id + " .bar", { scaleY: 0 }, { scaleY: 1, duration: 0.45, ease: "expo.out" }, t0 + 0.12);
+        tl.fromTo(id + " .big", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, t0 + 0.16);
+        tl.fromTo(id + " .sm", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, t0 + 0.3);
+        tl.to(id, { opacity: 0, x: 40, duration: 0.22, ease: "power2.in" }, t0 + dur - 0.3);
+      });
+      tl.fromTo("#s-map", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 12.3);
+      tl.to("#s-map", { opacity: 0, duration: 0.3 }, 21.2);
+      tl.set("#flash", { opacity: 0 }, 0);
+      [12.0, 14.4, 16.2, 18.0, 19.8, 21.6].forEach((t) => {
+        tl.set("#flash", { opacity: 0.5 }, t);
+        tl.to("#flash", { opacity: 0, duration: 0.24, ease: "power2.out" }, t + 0.01);
+      });
+
+      /* ===== call to action ===== */
+      tl.fromTo("#c-scrim", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 21.6);
+      tl.fromTo("#c-title", { opacity: 0, y: 60, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "expo.out" }, 21.65);
+      tl.fromTo("#c-sub", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 22.4);
+      tl.fromTo("#c-url", { opacity: 0, y: 40, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 22.95);
+      tl.to("#c-url", { boxShadow: "inset 0 2px 0 rgba(255,255,255,0.3), 0 0 50px rgba(255,157,124,0.6)", duration: 0.5, ease: "sine.inOut" }, 23.6);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
