@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>The Canal Ring</title>
 <meta name="description" content="Pilot a small wooden boat through the canals of Amsterdam at dusk. Free, runs in the browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -75,6 +75,36 @@ body.sailing .wind{border-color:var(--acc)}
 body.sailing #turboBtn{opacity:.45}
 .story .minimap{top:150px;left:18px;width:158px;height:112px}
 .story.nomap .minimap{visibility:hidden}
+.touch{display:none}
+body.has-touch .touch{display:block}
+.story .touch{display:none!important}
+html,body{overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.tpad{position:fixed;bottom:max(26px,calc(env(safe-area-inset-bottom) + 16px));z-index:4;display:flex;gap:14px}
+.tpad-l{left:max(18px,env(safe-area-inset-left))}
+.tpad-r{right:max(18px,env(safe-area-inset-right));flex-direction:column}
+.tbtn{width:86px;height:86px;border-radius:28px;display:grid;place-items:center;color:var(--ink);font-size:40px;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent;transition:transform .12s var(--ease),background-color .15s,box-shadow .2s,color .15s}
+.tbtn.on{transform:scale(.92);color:#2a1210;background:linear-gradient(135deg,#ffc3a6,#ff9a74);border-color:rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 30px rgba(255,150,110,.55)}
+/* touch layout: actions stack above the right-hand pad, icons only */
+body.has-touch .hint{display:none}
+body.has-touch .dock{left:auto;right:max(18px,env(safe-area-inset-right));transform:none;bottom:calc(max(26px,calc(env(safe-area-inset-bottom) + 16px)) + 2*86px + 14px + 20px);flex-direction:column;align-items:center;gap:12px;max-width:none}
+body.has-touch .pill,body.has-touch .round{width:56px;height:56px;padding:0;border-radius:50%;justify-content:center;display:grid;place-items:center;font-size:24px}
+body.has-touch .pill span{display:none}
+body.has-touch .pill i{font-size:26px}
+body.has-touch .round{font-size:24px}
+body.has-touch .toast{bottom:auto;left:auto;right:max(14px,env(safe-area-inset-right));transform:none;top:calc(max(14px,env(safe-area-inset-top)) + 62px);max-width:calc(100vw - 200px);border-radius:22px;text-align:left;line-height:1.35}
+@media (max-height:540px){
+  .tbtn{width:70px;height:70px;font-size:34px;border-radius:24px}
+  .minimap{width:176px;height:124px;left:max(14px,env(safe-area-inset-left));top:12px;padding:4px;border-radius:16px}
+  .minimap canvas{border-radius:12px}
+  .wind{top:146px;left:max(14px,env(safe-area-inset-left));padding:8px 14px 8px 10px}
+  .wind small{display:none}
+  .gate{top:12px;right:max(14px,env(safe-area-inset-right))}
+  #gateBtn{min-width:0;gap:12px;padding-left:16px}
+  .gtext small{display:none}
+  body.has-touch .dock{bottom:auto;top:78px;right:max(14px,env(safe-area-inset-right));flex-direction:row}
+  body.has-touch .toast{top:140px;max-width:46vw}
+  .tpad{bottom:max(18px,calc(env(safe-area-inset-bottom) + 10px))}
+}
 @media (max-width:640px){
   .wind{top:calc(14px + 118px);left:12px;padding:8px 14px 8px 10px}
   .wind small{display:none}
@@ -105,6 +135,17 @@ body.sailing #turboBtn{opacity:.45}
     <span class="chev"><i class="ph ph-caret-down"></i></span>
   </button>
   <div id="menu" class="glass" role="menu"></div>
+</div>
+
+<div class="touch" id="touch" aria-label="Touch controls">
+  <div class="tpad tpad-l">
+    <button class="tbtn glass" id="tLeft" aria-label="Steer left"><i class="ph ph-arrow-left"></i></button>
+    <button class="tbtn glass" id="tRight" aria-label="Steer right"><i class="ph ph-arrow-right"></i></button>
+  </div>
+  <div class="tpad tpad-r">
+    <button class="tbtn glass" id="tUp" aria-label="Go forward"><i class="ph ph-arrow-up"></i></button>
+    <button class="tbtn glass" id="tDown" aria-label="Reverse"><i class="ph ph-arrow-down"></i></button>
+  </div>
 </div>
 
 <div class="dock">
@@ -1226,6 +1267,9 @@ function emit(x,z,vx,vz,s){wPos[wi*3]=x;wPos[wi*3+1]=.04;wPos[wi*3+2]=z;wAge[wi]
 const S={x:0,z:98,h:Math.PI,v:0,w:0,steer:0,thr:0,auto:true,wp:1,turbo:false,camH:Math.PI,bump:0,bumpCool:0,bumps:0,stuckT:0,recT:0,sail:false};
 const WPTS=[[0,60],[0,-60],[0,-140],[-6,-168],[-60,-171],[-130,-171],[-210,-171],[-236,-172],[-248,-158],[-250,-120],[-250,-80],[-251,-62],[-258,-50],[-330,-50],[-340,-62],[-340,-110],[-338,-160],[-338,-168],[-320,-173],[-280,-172],[-200,-171],[-120,-171],[-40,-171],[6,-168],[0,-128],[0,-40],[0,56],[-14,82],[0,100],[14,82],[0,66]];
 const keys={};let pointerDrive=null;
+const touchUI=matchMedia('(pointer:coarse)').matches||/[?&]touch/.test(location.search);
+if(touchUI)document.body.classList.add('has-touch');
+const tstate={l:false,r:false,u:false,d:false};
 const sailBtn=document.getElementById('sailBtn'),turboBtn=document.getElementById('turboBtn'),menuEl=document.getElementById('menu'),hint=document.getElementById('hint'),autoBtn=document.getElementById('autoBtn'),soundBtn=document.getElementById('soundBtn');
 function setAuto(v){S.auto=v;autoBtn.setAttribute('aria-pressed',v);if(v){let b=0,bd=1e9;WPTS.forEach((p,i)=>{const d=Math.hypot(p[0]-S.x,p[1]-S.z);const ang=Math.abs(wrapPI(Math.atan2(p[0]-S.x,p[1]-S.z)-S.h));if(d<bd&&ang<1.6&&d>6){bd=d;b=i}});S.wp=b}}
 let hintT=0;
@@ -1239,10 +1283,18 @@ addEventListener('keydown',e=>{
   if(k==='escape')closeMenu();
 });
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;if(e.code==='Space')e.preventDefault()});
-canvas.addEventListener('pointerdown',e=>{initAudio();closeMenu();pointerDrive={x:e.clientX};if(S.auto)setAuto(false);canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointerdown',e=>{initAudio();closeMenu();if(touchUI)return;pointerDrive={x:e.clientX};if(S.auto)setAuto(false);canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener('pointermove',e=>{if(pointerDrive)pointerDrive.x=e.clientX});
 const endPtr=()=>{pointerDrive=null};canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);
 autoBtn.addEventListener('click',()=>setAuto(!S.auto));
+/* on-screen arrows: hold to steer / go / reverse; several can be held at once (two thumbs) */
+[['tLeft','l'],['tRight','r'],['tUp','u'],['tDown','d']].forEach(([id,k])=>{
+  const b=document.getElementById(id);
+  const down=e=>{e.preventDefault();initAudio();closeMenu();tstate[k]=true;b.classList.add('on');if(S.auto)setAuto(false);try{b.setPointerCapture(e.pointerId)}catch(_){}if(navigator.vibrate)navigator.vibrate(6)};
+  const up=()=>{tstate[k]=false;b.classList.remove('on')};
+  b.addEventListener('pointerdown',down);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);b.addEventListener('contextmenu',e=>e.preventDefault());
+});
+addEventListener('blur',()=>{for(const k in tstate)tstate[k]=false;document.querySelectorAll('.tbtn.on').forEach(b=>b.classList.remove('on'))});
 function setTurbo(v){if(v&&S.sail){toast('Turbo needs the engine. Press F to switch back.');return}S.turbo=v;turboBtn.setAttribute('aria-pressed',v);document.body.classList.toggle('turbo',v)}
 turboBtn.addEventListener('click',()=>{initAudio();setTurbo(!S.turbo)});
 const turboOn=()=>!S.sail&&(S.turbo||!!keys.shift);
@@ -1254,7 +1306,8 @@ function manualInput(){
   if(keys.w||keys.arrowup)t+=1;if(keys.s||keys.arrowdown)t-=.6;
   if(keys.d||keys.arrowright)s+=1;if(keys.a||keys.arrowleft)s-=1;
   if(pointerDrive){t=1;s=clamp((pointerDrive.x-innerWidth/2)/(innerWidth*.28),-1,1)}
-  return {t,s};
+  if(tstate.u)t+=1;if(tstate.d)t-=.6;if(tstate.r)s+=1;if(tstate.l)s-=1;
+  return {t:clamp(t,-1,1),s:clamp(s,-1,1)};
 }
 function autoInput(dt){
   const maxV=turboOn()?30:13.5;
@@ -1447,7 +1500,7 @@ function updateWindChip(dt,time){
   if(!ar)return;
   ar.style.transform=`rotate(${(-wrapPI(w.psi-S.h)*180/Math.PI).toFixed(0)}deg)`;
   document.getElementById('windSpd').textContent=`Wind ${(w.spd*1.94).toFixed(0)} kn`;
-  document.getElementById('windTxt').textContent=S.sail?WS.label:'Press F to sail';
+  document.getElementById('windTxt').textContent=S.sail?WS.label:(touchUI?'Tap the sail button':'Press F to sail');
 }
 
 /* ---------- loop ---------- */
@@ -1541,6 +1594,7 @@ function frame(now){
 const mirrorPlane=new THREE.Plane(new THREE.Vector3(0,-1,0),0);
 window.app={S,OBST,COFFEE_POS,swans,setSail,WS,setTime:t=>{tNow=t;timeLocked=true},setAuto,setTurbo,snap:()=>{camSnap=true},clearWake:()=>{wAge.fill(1)},scene,camera,renderer};
 setAuto(true);
+if(touchUI&&!/[?&]rec/.test(location.search))setTimeout(()=>toast('Use the arrows to steer. Sail and Turbo are on the right.'),3200);
 const REC=/[?&]rec/.test(location.search);
 if(REC){
   /* deterministic frame-by-frame mode used to export the MP4 */

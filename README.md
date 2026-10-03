@@ -17,10 +17,16 @@ One HTML file. [Three.js](https://threejs.org) from a CDN, no build step, no acc
 - **Shops** along the quays (cafes, cheese, bikes, tulips, fries and coffeeshops) with lit windows and signs.
 - **Nature:** rolling hills, forests and meadows around the town.
 - **Minimap** with your position, and an **autopilot** that tours the whole network.
+- **Phone and tablet controls:** on-screen arrows (steer, go, reverse) and round Sail, Turbo, Autopilot and Sound buttons, laid out for two thumbs in portrait and landscape.
 
 | Under sail | Hills and windmills |
 |---|---|
 | ![Sail mode](docs/sail-mode.png) | ![Nature](docs/nature-hills.png) |
+
+<p>
+  <img src="docs/touch-portrait.png" alt="Touch controls in portrait" height="460">
+  <img src="docs/touch-landscape.png" alt="Touch controls in landscape" height="260">
+</p>
 
 ## Controls
 
@@ -30,7 +36,7 @@ One HTML file. [Three.js](https://threejs.org) from a CDN, no build step, no acc
 | `Space` or `T` | Turbo (engine only). Hold `Shift` for a momentary boost |
 | `F` | Switch between engine and sails |
 | `P` | Autopilot |
-| Click / drag (touch) | Hold to drive, drag sideways to steer |
+| Touch screens | `◀` `▶` steer (left thumb), `▲` go and `▼` reverse (right thumb); round buttons for Sail, Turbo, Autopilot and Sound. Hold several at once |
 
 ## Run it
 
